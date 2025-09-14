@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matthis Auvinet | Développeur Full-Stack & Systèmes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #050505;
+            color: #f8f8f8;
+            line-height: 1.6;
+            overflow-x: hidden;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* Particules d'arrière-plan */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(0, 102, 204, 0.3);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* Effets de lueur */
+        .glow {
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .glow-blue:hover, .glow-blue.active {
+            text-shadow: 0 0 15px rgba(0, 102, 204, 0.7);
+            box-shadow: 0 0 20px rgba(0, 102, 204, 0.3);
+        }
+
+        .glow-red:hover, .glow-red.active {
+            text-shadow: 0 0 15px rgba(204, 0, 0, 0.7);
+            box-shadow: 0 0 20px rgba(204, 0, 0, 0.3);
+        }
+
+        .glow-white:hover, .glow-white.active {
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Header & Burger Menu */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 102, 204, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-pic-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, #0066cc, #ffffff, #cc0000);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1.2s ease forwards 0.3s;
+        }
+
+        .profile-pic-container::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(0, 102, 204, 0.3), rgba(255, 255, 255, 0.3), rgba(204, 0, 0, 0.3));
+            z-index: -1;
+            opacity: 0.7;
+        }
+
+        .profile-pic-container:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 102, 204, 0.5);
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid rgba(10, 10, 10, 0.5);
+            display: block;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(90deg, #0066cc, #ffffff, #cc0000);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        /* Burger Menu (Mobile) */
+        .burger {
+            display: none;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background-color: #f8f8f8;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            color: #aaa;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, #0066cc, #ffffff, #cc0000);
+            transition: width 0.3s ease;
+        }
+
+        nav ul li a.active {
+            color: #f8f8f8;
+        }
+
+        nav ul li a.active::after {
+            width: 100%;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            transition: right 0.5s ease;
+            z-index: 1000;
+            padding: 50px 20px;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu ul {
+            list-style: none;
+            text-align: center;
+        }
+
+        .mobile-menu li {
+            margin-bottom: 20px;
+        }
+
+        .mobile-menu a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .mobile-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #0066cc, #ffffff, #cc0000);
+            transition: width 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: #f8f8f8;
+        }
+
+        .mobile-menu a:hover::after {
+            width: 50px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero h1 {
+            font-size: 4.5rem;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.2s ease forwards 0.5s;
+            background: linear-gradient(90deg, #0066cc, #ffffff, #cc0000);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        #hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.2s ease forwards 0.8s;
+            color: #aaa;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            background: transparent;
+            border: 1px solid #0066cc;
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.2s ease forwards 1s;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 102, 204, 0.3), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            color: #f8f8f8;
+            box-shadow: 0 0 25px rgba(0, 102, 204, 0.5);
+        }
+
+        /* Skills Section */
+        #skills {
+            padding: 120px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 60px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.2s ease forwards;
+            background: linear-gradient(90deg, #0066cc, #ffffff, #cc0000);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.2s ease forwards 0.3s;
+        }
+
+        .skill-card {
+            background: rgba(10, 10, 10, 0.6);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(0, 102, 204, 0.2);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 102, 204, 0.2);
+        }
+
+        .skill-card i {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #0066cc;
+        }
+
+        .skill-card:nth-child(2) i {
+            color: #ffffff;
+        }
+
+        .skill-card:nth-child(3) i {
+            color: #cc0000;
+        }
+
+        .skill-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #0066cc, #ffffff, #cc0000);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .skill-card ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .skill-card li {
+            padding: 8px 0;
+            color: #aaa;
+            position: relative;
+            padding-left: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .skill-card li::before {
+            content: "▹";
+            color: #0066cc;
+            position: absolute;
+            left: 0;
+        }
+
+        .skill-card:nth-child(2) li::before {
+            color: #ffffff;
+        }
+
+        .skill-card:nth-child(3) li::before {
+            color: #cc0000;
+        }
+
+        .skill-card li:hover {
+            color: #f8f8f8;
+            transform: translateX(5px);
+        }
+
+        /* Projects Section */
+        #projects {
+            padding: 120px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background: rgba(10, 10, 10, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.2s ease forwards;
+            border: 1px solid rgba(0, 102, 204, 0.2);
+        }
+
+        .project-card:nth-child(1) { animation-delay: 0.2s; }
+        .project-card:nth-child(2) { animation-delay: 0.4s; }
+        .project-card:nth-child(3) { animation-delay: 0.6s; }
+
+        .project-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 30px rgba(0, 102, 204, 0.2);
+        }
+
+        .project-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-info {
+            padding: 20px;
+        }
+
+        .project-info h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .project-info p {
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        /* Contact Section */
+        #contact {
+            padding: 120px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+       
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 50px;
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(0, 102, 204, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .social-links a {
+            color: #aaa;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #0066cc;
+            transform: translateY(-3px);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+
+            .burger {
+                display: block;
+            }
+
+            nav {
+                display: none;
+            }
+
+            #hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .skills-container {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-pic-container {
+                width: 40px;
+                height: 40px;
+            }
+        }
+     .presentation-office1789 {
+    
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin: 2rem auto;
+    text-align: center;
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+  .presentation-office1789 h1 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+  }
+  .presentation-office1789 p {
+    font-size: 1.1rem;
+    color: #444;
+    line-height: 1.6;
+  }
+    </style>
+</head>
+<body>
+    <!-- Particules d'arrière-plan -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="profile-pic-container">
+                <img src="./photo2.jpg" alt="Matthis Auvinet" class="profile-pic">
+            </div>
+            <a href="#" class="logo glow">Auvinet Matthis</a>
+        </div>
+        <div class="burger" id="burger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <nav id="nav">
+            <ul>
+                <li><a href="#hero" class="glow glow-blue active" data-section="hero">Accueil</a></li>
+                <li><a href="#skills" class="glow glow-white" data-section="skills">Compétences</a></li>
+                <li><a href="#projects" class="glow glow-red" data-section="projects">Projets</a></li>
+                <li><a href="#contact" class="glow glow-blue" data-section="contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="mobile-menu" id="mobileMenu">
+            <button class="close-btn" id="closeBtn">&times;</button>
+            <ul>
+                <li><a href="#hero" class="glow-blue" data-section="hero">Accueil</a></li>
+                <li><a href="#skills" class="glow-white" data-section="skills">Compétences</a></li>
+                <li><a href="#projects" class="glow-red" data-section="projects">Projets</a></li>
+                <li><a href="#contact" class="glow-blue" data-section="contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <h1>Développeur Full-Stack & Systèmes</h1>
+        <p>Je conçois des solutions logicielles performantes en Go, Python, JavaScript et C++, avec une expertise en administration système et en développement embarqué.</p>
+        <a href="#projects" class="btn glow-blue">Voir mes projets</a>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <h2 class="section-title">Mes Compétences</h2>
+        <div class="skills-container">
+            <div class="skill-card glow-blue">
+                <i class="fas fa-code"></i>
+                <h3>Backend & IA & Soft</h3>
+                <ul>
+                    <li>Go (Gin, Fiber)</li>
+                    <li>Python (Django, Flask, PyTorch)</li>
+                    <li>Node.js (Express)</li>
+                    <li>C++ (Qt, POO)</li>
+                </ul>
+            </div>
+            <div class="skill-card glow-white">
+                <i class="fas fa-laptop-code"></i>
+                <h3>Frontend & Apps</h3>
+                <ul>
+                    <li>Vue.js / React</li>
+                    <li>Electron</li>
+                    <li>HTML5 / CSS3</li>
+                    <li>WebGL (Three.js)</li>
+                </ul>
+            </div>
+            <div class="skill-card glow-red">
+                <i class="fas fa-server"></i>
+                <h3>Systèmes & Outils</h3>
+                <ul>
+                    <li>Docker / Kubernetes</li>
+                    <li>Admin Sys (Debian, Arch)</li>
+                    <li>Arduino / Raspberry Pi</li>
+                    <li>CI/CD (GitHub Actions)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2 class="section-title">Mes Réalisations</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-img" style="background-image: url('office1.png');"></div>
+                <div class="project-info">
+                    <div class="presentation-office1789">
+  <h1>🚀 Office1789</h1>
+  <a href="https://github.com/LeSimple02/office1789">Voir le projet</a>
+  <p>
+    <strong>Office1789</strong> est une application web open-source qui ambitionne 
+    de devenir une alternative moderne à Microsoft Office 365. 
+    Construit avec <em>Vue.js</em>, <em>Gin (Go)</em> et <em>PostgreSQL</em>, 
+    le projet s’appuie sur Docker pour offrir une solution performante, 
+    portable et facile à déployer. Avec une séparation claire entre le 
+    frontend et le backend, il propose une base solide pour bâtir un 
+    écosystème bureautique collaboratif, libre et accessible à tous.
+  </p>
+</div>
+                </div>
+            </div>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-img" style="background-image: url('logos.jpg');"></div>
+                <div class="project-info">
+                    <h3>API REST en Go</h3>
+                    <p>Développement d'une API performante avec Gin, intégration base de données PostgreSQL et authentification JWT.</p>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img" style="background-image: url('hq720.jpg');"></div>
+                <div class="project-info">
+                    <h3>Application Electron</h3>
+                    <p>Création d'une application desktop multiplateforme avec Vue.js/React et Electron, pour la gestion de projets.</p>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img" style="background-image: url('rasp.png');"></div>
+                <div class="project-info">
+                    <h3>Système Embarqué</h3>
+                    <p>Développement d'un système de monitoring avec Arduino et Raspberry Pi, en C++ et Python.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <p>📧 Contactez-moi : 
+   <a href="mymailbtm@fastmail.com">mymailbtm@fastmail.com</a>
+</p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="social-links">
+            <a href="#" class="glow-blue"><i class="fab fa-github"></i></a>
+            <a href="#" class="glow-white"><i class="fab fa-linkedin"></i></a>
+            <a href="#" class="glow-red"><i class="fab fa-twitter"></i></a>
+        </div>
+        <p>&copy; 2025 Matthis Auvinet. Développeur Full-Stack & Systèmes.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Particules d'arrière-plan
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 30;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.width = `${Math.random() * 3 + 1}px`;
+            particle.style.height = particle.style.width;
+            particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            particlesContainer.appendChild(particle);
+        }
+
+        // Burger Menu
+        const burger = document.getElementById('burger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeBtn = document.getElementById('closeBtn');
+        const navLinks = document.querySelectorAll('nav a, .mobile-menu a');
+
+        burger.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+
+        // Navigation active
+        const sections = document.querySelectorAll('section');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scrolling
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                mobileMenu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
